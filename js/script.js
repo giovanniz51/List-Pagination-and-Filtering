@@ -13,6 +13,45 @@ FSJS project 2 - List Filter and Pagination
 const studentList = document.querySelector(".student-list").children;
 const itemsOnPage = 10;
 
+const div = document.createElement("div");
+div.className = "student-search";
+div.innerHTML = `
+   <input placeholder="Search for students...">
+   <button>Search</button
+`;
+
+document.querySelector(".page-header").appendChild(div);
+
+function search(input) {
+
+      if(document.querySelector(".error")){
+         document.querySelector(".error").remove();
+      }
+
+      const searchResults = [];
+      Array.from(studentList).forEach(student => {
+         if(student.textContent.includes(input.target.value.toLowerCase())){
+            searchResults.push(student);
+            student.style.display = "block";
+         }else {
+            student.style.display = "none";
+         }
+      });
+      const pagination = document.querySelector(".pagination");
+      pagination.remove();
+      
+      if(searchResults.length <= 0){
+         const page = document.querySelector(".page");
+         const h3 = document.createElement("h3");
+         h3.className = "error";
+         h3.textContent = `No student with the name ${input.target.value} found!`;
+         h3.style.color = "red";
+         page.appendChild(h3);
+      }
+
+      appendPageLinks(searchResults);
+   
+}
 
 
 /*** 
@@ -52,8 +91,13 @@ function appendPageLinks(list) {
       ul.appendChild(li);
    }
 
-   ul.firstChild.firstChild.className = "active";
+   if(ul.children.length > 0)
+      ul.children[0].firstElementChild.className = "active";
+
    document.querySelector(".page").appendChild(div);
+
+   
+   showPage(list, 1);
 
    const a = document.querySelectorAll(".pagination a");
    a.forEach(link => {
@@ -67,9 +111,15 @@ function appendPageLinks(list) {
 
 }
 
+const searchInput = document.querySelector(".student-search").firstElementChild;
+searchInput.addEventListener("keyup", e => {
+   search(e);
+});
 
+searchInput.addEventListener("change", e => {
+   search(e);
+});
 
-showPage(studentList, 1);
 appendPageLinks(studentList);
 
 
